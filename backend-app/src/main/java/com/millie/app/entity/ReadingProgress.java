@@ -1,6 +1,5 @@
 package com.millie.app.entity;
 
-import com.millie.app.enums.LengthOption;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +18,15 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class ReadingProgress {
     
-    @EmbeddedId
-    private ReadingProgressId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+    
+    @Column(name = "book_id", nullable = false)
+    private Long bookId;
     
     @Column(name = "last_page", nullable = false)
     private Integer lastPage;
@@ -35,11 +41,4 @@ public class ReadingProgress {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
-    
-    @Column(name = "last_summary_text", columnDefinition = "TEXT")
-    private String lastSummaryText;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "last_summary_length_opt", length = 20)
-    private LengthOption lastSummaryLengthOpt;
 }

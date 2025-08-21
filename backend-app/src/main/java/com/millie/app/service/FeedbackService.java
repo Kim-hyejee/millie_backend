@@ -4,7 +4,6 @@ import com.millie.app.dto.SummaryFeedbackRequest;
 import com.millie.app.dto.SummaryFeedbackResponse;
 import com.millie.app.entity.Book;
 import com.millie.app.entity.ReadingProgress;
-import com.millie.app.entity.ReadingProgressId;
 import com.millie.app.entity.SummaryFeedback;
 import com.millie.app.entity.User;
 import com.millie.app.repository.BookRepository;
@@ -52,13 +51,16 @@ public class FeedbackService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Get reading progress
-        ReadingProgressId progressId = new ReadingProgressId(DEFAULT_USER_ID, request.getBookId());
-        ReadingProgress progress = readingProgressRepository.findById(progressId)
-                .orElseThrow(() -> new RuntimeException("Reading progress not found"));
+        Optional<ReadingProgress> progress = readingProgressRepository
+                .findLatestByUserIdAndBookId(DEFAULT_USER_ID, request.getBookId());
+        
+        if (progress.isEmpty()) {
+            throw new RuntimeException("Reading progress not found");
+        }
         
         // Create feedback
         SummaryFeedback feedback = new SummaryFeedback();
-        feedback.setProgressUserId(progress.getId().getUserId());
+        feedback.setProgressUserId(progress.get().getUserId());
         feedback.setBookId(request.getBookId());
         feedback.setUser(user);
         feedback.setRating(request.getRating());

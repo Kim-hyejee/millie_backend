@@ -10,6 +10,9 @@ DROP TABLE IF EXISTS reading_progress CASCADE;
 -- 2. 기본 테이블들을 삭제
 DROP TABLE IF EXISTS books CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS reading_progress CASCADE;
+DROP TABLE IF EXISTS summaries CASCADE;
+DROP TABLE IF EXISTS summary_feedbacks CASCADE;
 
 -- 3. ENUM 타입 삭제
 DROP TYPE IF EXISTS summary_length_opt CASCADE;
@@ -47,11 +50,21 @@ CREATE TABLE reading_progress (
     last_opened_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    last_summary_text TEXT,
-    last_summary_length_opt summary_length_opt,
     PRIMARY KEY (user_id, book_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (book_id) REFERENCES books(id)
+);
+
+-- Create summaries table for page-specific summaries
+CREATE TABLE summaries (
+    id BIGSERIAL PRIMARY KEY,
+    book_id BIGINT NOT NULL,
+    last_page INTEGER NOT NULL,
+    summary_text TEXT NOT NULL,
+    length_option summary_length_opt NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (book_id) REFERENCES books(id),
+    UNIQUE(book_id, last_page)
 );
 
 -- Create summary_feedbacks table

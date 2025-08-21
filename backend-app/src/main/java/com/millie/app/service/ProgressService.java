@@ -4,7 +4,6 @@ import com.millie.app.dto.ReadingProgressResponse;
 import com.millie.app.dto.ViewerCloseRequest;
 import com.millie.app.entity.Book;
 import com.millie.app.entity.ReadingProgress;
-import com.millie.app.entity.ReadingProgressId;
 import com.millie.app.entity.User;
 import com.millie.app.enums.LengthOption;
 import com.millie.app.repository.BookRepository;
@@ -40,31 +39,12 @@ public class ProgressService {
             throw new RuntimeException("Invalid last page");
         }
         
-        // Get or create reading progress
-        ReadingProgressId id = new ReadingProgressId(DEFAULT_USER_ID, request.getBookId());
-        Optional<ReadingProgress> existingProgress = readingProgressRepository.findById(id);
-        
-        ReadingProgress progress;
-        if (existingProgress.isPresent()) {
-            progress = existingProgress.get();
-            // Only update if new lastPage is greater
-            if (request.getLastPage() > progress.getLastPage()) {
-                progress.setLastPage(request.getLastPage());
-            }
-        } else {
-            progress = new ReadingProgress();
-            progress.setId(id);
-            progress.setLastPage(request.getLastPage());
-        }
-        
-        // Update timestamps and summary
+        // Create new reading progress entry
+        ReadingProgress progress = new ReadingProgress();
+        progress.setUserId(DEFAULT_USER_ID);
+        progress.setBookId(request.getBookId());
+        progress.setLastPage(request.getLastPage());
         progress.setLastOpenedAt(OffsetDateTime.now());
-        progress.setLastSummaryLengthOpt(request.getLengthOpt());
-        
-        // Generate summary
-        String summaryText = dummyTextSource.getTextFromPages(request.getBookId(), 1, request.getLastPage());
-        String summary = dummySummarizer.summarize(summaryText, request.getLengthOpt());
-        progress.setLastSummaryText(summary);
         
         // Save progress
         ReadingProgress savedProgress = readingProgressRepository.save(progress);
@@ -74,7 +54,7 @@ public class ProgressService {
     
     public ReadingProgressResponse getProgress(Long userId, Long bookId) {
         Optional<ReadingProgress> progress = readingProgressRepository
-                .findByUserIdAndBookId(userId, bookId);
+                .findLatestByUserIdAndBookId(userId, bookId);
         
         if (progress.isEmpty()) {
             return null;
@@ -85,14 +65,14 @@ public class ProgressService {
     
     private ReadingProgressResponse convertToResponse(ReadingProgress progress) {
         return new ReadingProgressResponse(
-                progress.getId().getUserId(),
-                progress.getId().getBookId(),
+                progress.getUserId(),
+                progress.getBookId(),
                 progress.getLastPage(),
                 progress.getLastOpenedAt(),
                 progress.getCreatedAt(),
                 progress.getUpdatedAt(),
-                progress.getLastSummaryText(),
-                progress.getLastSummaryLengthOpt()
+                null, // lastSummaryText는 summaries 테이블로 이동
+                null  // lastSummaryLengthOpt는 summaries 테이블로 이동
         );
     }
 }

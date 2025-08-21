@@ -1,24 +1,54 @@
+
 -- Insert sample data
+-- Users
 INSERT INTO users (id, email, password_hash, name, created_at, updated_at) VALUES 
-(1,'user1@example.com', 'dummy_hash_123', 'Test User', NOW(), NOW());
+(1, 'user1@example.com', 'dummy_hash_123', '김독서', NOW(), NOW()),
+(2, 'user2@example.com', 'dummy_hash_456', '이책사랑', NOW(), NOW()),
+(3, 'user3@example.com', 'dummy_hash_789', '박지식', NOW(), NOW());
 
-INSERT INTO books (id,title, author, total_pages, isbn, created_at) VALUES 
-(101,'The Great Gatsby', 'F. Scott Fitzgerald', 180, '978-0743273565', NOW()),
-(102,'To Kill a Mockingbird', 'Harper Lee', 281, '978-0446310789', NOW());
+-- Books
+INSERT INTO books (id, title, author, total_pages, isbn, created_at) VALUES 
+(101, 'The Great Gatsby', 'F. Scott Fitzgerald', 180, '978-0743273565', NOW()),
+(102, 'To Kill a Mockingbird', 'Harper Lee', 281, '978-0446310789', NOW()),
+(103, '어린 왕자', '앙투안 드 생텍쥐페리', 136, '9780156012195', NOW()),
+(104, '1984', 'George Orwell', 328, '978-0451524935', NOW()),
+(105, 'Pride and Prejudice', 'Jane Austen', 432, '978-0141439518', NOW());
 
-INSERT INTO books (id, title, author, total_pages, isbn) VALUES 
-(103,'어린 왕자', '앙투안 드 생텍쥐페리', 136, '9780156012195');
+-- Reading Progress (요약 정보 제거, 복합키 사용)
+INSERT INTO reading_progress (user_id, book_id, last_page, last_opened_at, created_at, updated_at) VALUES
+(1, 103, 55, NOW(), NOW(), NOW()),  -- 김독서가 어린 왕자를 55페이지까지 읽음
+(1, 101, 45, NOW(), NOW(), NOW()),  -- 김독서가 The Great Gatsby를 45페이지까지 읽음
+(1, 104, 120, NOW(), NOW(), NOW()), -- 김독서가 1984를 120페이지까지 읽음
+(2, 102, 89, NOW(), NOW(), NOW()),  -- 이책사랑이 To Kill a Mockingbird를 89페이지까지 읽음
+(2, 105, 156, NOW(), NOW(), NOW()); -- 이책사랑이 Pride and Prejudice를 156페이지까지 읽음
 
-INSERT INTO reading_progress
-(user_id, book_id, last_page, last_opened_at, last_summary_text, last_summary_length_opt)
-VALUES
-(
-  1,  -- 예시: Alice (user_id=1)
-  103,  -- 어린 왕자 (book_id=6)
-  12, -- 현재까지 읽은 페이지
-  NOW(),
-  '화자는 어린 시절 보아뱀 그림으로 오해받으며 화가의 꿈을 접고 비행사가 된다. 
+-- Summaries (페이지별 요약 정보)
+INSERT INTO summaries (book_id, last_page, summary_text, length_option, created_at) VALUES
+-- 어린 왕자 요약들
+(103, 12, '화자는 어린 시절 보아뱀 그림으로 오해받으며 화가의 꿈을 접고 비행사가 된다. 
    사하라 사막에 불시착한 후 어린 왕자를 만나고, 왕자의 “양을 그려 달라”는 부탁을 
-   여러 번 거절하다가 결국 상자 그림으로 만족을 얻으며 두 사람의 만남이 시작된다.',
-  'NORMAL'  -- 대문자로 변경
-)
+   여러 번 거절하다가 결국 상자 그림으로 만족을 얻으며 두 사람의 만남이 시작된다.', 'SHORT', NOW()),
+(103, 55, '화자는 어린 시절 보아뱀이 코끼리를 삼킨 그림을 그렸으나, 어른들이 이해하지 못해 화가의 꿈을 포기하고 비행사가 된다. 그러던 중 사하라 사막에 불시착하게 되고, 그곳에서 신비롭고 진지한 아이인 어린 왕자를 만난다. 어린 왕자는 “양을 그려 달라”고 부탁하며 화자와 친구가 된다.
+
+대화를 나누며 어린 왕자가 작은 별(소행성 B612)에서 왔음을 알게 된다. 그 별에는 바오밥나무 같은 위험한 싹이 있어 매일 뽑아야 하고, 의자만 옮기면 여러 번 해질녘을 볼 수 있을 만큼 작다. 어린 왕자는 해질녘을 사랑하며, 그만큼 외롭고 쓸쓸한 마음을 드러낸다.
+
+그는 특히 자신의 별에 핀 단 하나뿐인 꽃을 소중히 여긴다. 그 꽃은 까다롭고 허영심도 있지만, 동시에 연약한 존재였다. 어린 왕자는 꽃을 사랑했지만 그 마음을 제대로 표현하지 못했고, 꽃의 모순된 말들에 상처받아 결국 별을 떠나기로 결심한다. 꽃은 떠나는 순간에야 진심을 털어놓으며 어린 왕자를 사랑했다고 고백하지만, 이미 그는 철새들의 무리를 따라 여행길에 오른다.
+
+별을 떠나기 전, 어린 왕자는 화산들을 청소하고 바오밥 씨앗을 뽑으며 자신의 별을 정리한다. 마지막으로 꽃에게 작별 인사를 나누는데, 꽃은 더 이상 유리 덮개도, 바람막이도 필요 없다며 자존심을 지킨 채 눈물을 감춘다. 어린 왕자는 아쉬움을 품고 떠난다.
+
+그가 처음 방문한 별은 왕이 사는 별이다. 왕은 절대권력을 자처하지만, 실제로는 명령을 현실에 맞게 내리는 ‘겉만 위엄 있는 인물’이다. 어린 왕자는 왕의 권위가 허망하다는 것을 느끼고 곧 그곳을 떠난다.', 'NORMAL', NOW()),
+
+-- The Great Gatsby 요약들
+(101, 45, '1922년 뉴욕 롱아일랜드에서 닉 캐러웨이는 이웃인 제이 게츠비의 화려한 파티에 초대된다. 게츠비는 신비로운 인물로, 닉은 그의 과거와 부의 원천에 대해 궁금해한다. 닉의 사촌 데이지와 그녀의 남편 톰과도 만나게 되는데, 이들 사이에는 복잡한 관계가 얽혀있다.', 'SHORT', NOW()),
+(101, 180, '게츠비의 과거가 밝혀지고, 데이지와의 사랑이 재점화되지만, 톰의 질투와 사회적 편견으로 인해 비극이 발생한다. 게츠비는 데이지를 위해 모든 것을 바치지만, 결국 총을 맞아 죽고 만다. 닉은 이 경험을 통해 미국의 꿈과 환멸, 그리고 인간의 허영심과 탐욕을 깨닫게 된다.', 'DEEP', NOW()),
+
+-- 1984 요약들
+(104, 120, '1984년 런던에서 빅 브라더가 감시하는 전체주의 사회를 배경으로 한다. 주인공 윈스턴 스미스는 진실부에서 일하며 과거 기록을 조작한다. 그는 줄리아와 사랑에 빠지지만, 사상경찰에게 발각되어 고문을 받게 된다.', 'NORMAL', NOW()),
+(104, 328, '윈스턴은 고문을 통해 모든 것을 부정하게 되고, 결국 빅 브라더를 사랑하게 된다. 그는 자신의 기억과 사랑을 배신하고, 완전히 체제에 굴복한다. 이 작품은 전체주의의 위험성과 인간의 자유의지에 대한 경고를 담고 있다.', 'DEEP', NOW());
+
+-- Summary Feedbacks (올바른 reading_progress 참조)
+INSERT INTO summary_feedbacks (progress_user_id, book_id, user_id, rating, is_helpful, comment, created_at) VALUES
+(1, 103, 1, 5, true, '정말 도움이 되는 요약이었어요!', NOW()),
+(1, 103, 2, 4, true, '핵심 내용을 잘 정리했네요.', NOW()),
+(2, 102, 1, 5, true, '이해하기 쉽게 설명되어 있어요.', NOW()),
+(2, 105, 3, 4, true, '좋은 요약입니다.', NOW());
