@@ -15,5 +15,6 @@ public class BookResponse {
     private String author;
     private Integer totalPages;
     private String isbn;
+    private String imageUrl;
     private OffsetDateTime createdAt;
 }

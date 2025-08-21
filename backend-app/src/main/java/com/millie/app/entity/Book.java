@@ -33,6 +33,9 @@ public class Book {
     @Column(length = 20)
     private String isbn;
     
+    @Column(name = "image_url")
+    private String imageUrl;
+    
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;

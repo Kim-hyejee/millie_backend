@@ -67,6 +67,7 @@ public class BookController {
                 book.getAuthor(),
                 book.getTotalPages(),
                 book.getIsbn(),
+                book.getImageUrl(),
                 book.getCreatedAt()
         );
     }
