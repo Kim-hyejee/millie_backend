@@ -40,7 +40,7 @@ public class BookController {
     
     @GetMapping("/{bookId}/progress")
     public ResponseEntity<ReadingProgressResponse> getProgress(@PathVariable Long bookId) {
-        ReadingProgressResponse progress = progressService.getProgress(bookId);
+        ReadingProgressResponse progress = progressService.getProgress(1L, bookId); // 임시로 userId=1 사용
         
         if (progress == null) {
             return ResponseEntity.notFound().build();
@@ -51,7 +51,7 @@ public class BookController {
     
     @GetMapping("/{bookId}/summary/latest")
     public ResponseEntity<String> getLatestSummary(@PathVariable Long bookId) {
-        ReadingProgressResponse progress = progressService.getProgress(bookId);
+        ReadingProgressResponse progress = progressService.getProgress(1L, bookId); // 임시로 userId=1 사용
         
         if (progress == null || progress.getLastSummaryText() == null) {
             return ResponseEntity.ok("");

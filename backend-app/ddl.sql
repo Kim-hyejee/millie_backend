@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS users CASCADE;
 DROP TYPE IF EXISTS summary_length_opt CASCADE;
 
 -- Create enum type for summary length options
-CREATE TYPE summary_length_opt AS ENUM ('short', 'normal', 'deep');
+CREATE TYPE summary_length_opt AS ENUM ('SHORT', 'NORMAL', 'DEEP');
 
 -- Create users table
 CREATE TABLE users (

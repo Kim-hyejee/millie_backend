@@ -72,9 +72,9 @@ public class ProgressService {
         return convertToResponse(savedProgress);
     }
     
-    public ReadingProgressResponse getProgress(Long bookId) {
+    public ReadingProgressResponse getProgress(Long userId, Long bookId) {
         Optional<ReadingProgress> progress = readingProgressRepository
-                .findByUserIdAndBookId(DEFAULT_USER_ID, bookId);
+                .findByUserIdAndBookId(userId, bookId);
         
         if (progress.isEmpty()) {
             return null;
