@@ -36,7 +36,7 @@ CREATE TABLE users (
 CREATE TABLE books (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
-    image_url VARCHAR(200) NOT NULL,
+    image_url VARCHAR(500) NOT NULL,
     author VARCHAR(100) NOT NULL,
     total_pages INTEGER NOT NULL,
     isbn VARCHAR(20),

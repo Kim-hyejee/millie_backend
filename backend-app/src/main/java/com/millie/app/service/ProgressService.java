@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,14 +54,16 @@ public class ProgressService {
     }
     
     public ReadingProgressResponse getProgress(Long userId, Long bookId) {
-        Optional<ReadingProgress> progress = readingProgressRepository
+        List<ReadingProgress> progressList = readingProgressRepository
                 .findLatestByUserIdAndBookId(userId, bookId);
         
-        if (progress.isEmpty()) {
+        if (progressList.isEmpty()) {
             return null;
         }
         
-        return convertToResponse(progress.get());
+        // 가장 최신 progress 반환 (lastPage가 가장 큰 것)
+        ReadingProgress latestProgress = progressList.get(0);
+        return convertToResponse(latestProgress);
     }
     
     private ReadingProgressResponse convertToResponse(ReadingProgress progress) {

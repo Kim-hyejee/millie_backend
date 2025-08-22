@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,16 +52,19 @@ public class FeedbackService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Get reading progress
-        Optional<ReadingProgress> progress = readingProgressRepository
+        List<ReadingProgress> progressList = readingProgressRepository
                 .findLatestByUserIdAndBookId(DEFAULT_USER_ID, request.getBookId());
         
-        if (progress.isEmpty()) {
+        if (progressList.isEmpty()) {
             throw new RuntimeException("Reading progress not found");
         }
         
+        // 가장 최신 progress 사용 (lastPage가 가장 큰 것)
+        ReadingProgress progress = progressList.get(0);
+        
         // Create feedback
         SummaryFeedback feedback = new SummaryFeedback();
-        feedback.setProgressUserId(progress.get().getUserId());
+        feedback.setProgressUserId(progress.getUserId());
         feedback.setBookId(request.getBookId());
         feedback.setUser(user);
         feedback.setRating(request.getRating());
